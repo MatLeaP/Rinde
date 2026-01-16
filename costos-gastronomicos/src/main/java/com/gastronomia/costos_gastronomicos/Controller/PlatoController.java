@@ -1,0 +1,56 @@
+package com.gastronomia.costos_gastronomicos.Controller;
+
+import org.springframework.web.bind.annotation.RestController;
+
+import com.gastronomia.costos_gastronomicos.Model.Plato;
+import com.gastronomia.costos_gastronomicos.Service.PlatoService;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+
+
+
+
+
+@RestController
+@RequestMapping("/api/plato")
+public class PlatoController {
+
+    @Autowired
+    PlatoService platosService;
+
+    @PostMapping
+    public ResponseEntity<Plato> savePlato(@RequestBody Plato plato){
+
+        Plato newPlato =  platosService.savePlato(plato);
+
+        return new ResponseEntity<>(newPlato, HttpStatus.CREATED);
+    }
+
+
+    @GetMapping 
+    public ResponseEntity<List<Plato>> getAllPlatos(){
+
+        List<Plato> platos = platosService.getAllPlatos();
+
+        return ResponseEntity.ok(platos);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Plato> plato(@PathVariable Long id){
+
+        Plato plato = platosService.getPlatoById(id);
+
+        return ResponseEntity.ok(plato);
+    }
+
+
+}

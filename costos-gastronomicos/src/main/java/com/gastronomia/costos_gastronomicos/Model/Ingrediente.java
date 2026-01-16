@@ -37,7 +37,7 @@ public class Ingrediente {
     private Cliente cliente;
 
     @ManyToOne
-    @JoinColumn(name = "proveedor_id", nullable = false)
+    @JoinColumn(name = "proveedor_id", nullable = true)
     @JsonIgnoreProperties({"ingredienteSuministrados", "facturas", "cliente"})
     private Proveedor proveedor;
 

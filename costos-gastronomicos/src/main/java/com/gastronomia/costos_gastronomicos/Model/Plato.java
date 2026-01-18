@@ -1,9 +1,9 @@
 package com.gastronomia.costos_gastronomicos.Model;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -35,22 +35,40 @@ public class Plato {
 
     private double costoTotal;
 
+    private double margen;
+
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
     @OneToMany(mappedBy = "plato", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PlatoIngrediente> receta = new ArrayList<>();
+    private List<PlatoIngrediente> receta;
 
 
-    public void calcularCosto(){
-        if(this.receta == null || this.receta.isEmpty()){
+    public double calcularCosto() {
+        if (this.receta == null || this.receta.isEmpty()) {
             this.costoTotal = 0;
-            return;
+            return 0.0;
         }
+        
         this.costoTotal = receta.stream()
-                    .filter(item -> item.getIngrediente() != null)
-                    .mapToDouble(item -> item.getIngrediente().getPrecioUnitario() * item.getCantidad())                     
-                    .sum(); 
+                .filter(item -> item.getIngrediente() != null)
+                .mapToDouble(item -> {
+                    // Si el ingrediente viene solo con ID del JSON, el precio será 0.
+                    // Asegúrate en el Service de cargar el ingrediente completo.
+                    return item.getIngrediente().getPrecioUnitario() * item.getCantidad();
+                })
+                .sum();
+        
+        return this.costoTotal;
+    }
+
+    public double aplicarMargen() {
+        if (this.costoTotal > 0 && this.margen > 0) {
+            this.precioVenta = this.costoTotal + (this.costoTotal * this.margen / 100);
+        } else {
+            this.precioVenta = this.costoTotal; // Si no hay margen, el precio es el costo
+        }
+        return this.precioVenta;
     }
 }

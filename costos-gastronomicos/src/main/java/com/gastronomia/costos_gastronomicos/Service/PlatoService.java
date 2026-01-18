@@ -7,8 +7,13 @@ import java.util.NoSuchElementException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.gastronomia.costos_gastronomicos.Model.Ingrediente;
 import com.gastronomia.costos_gastronomicos.Model.Plato;
+import com.gastronomia.costos_gastronomicos.Model.PlatoIngrediente;
+import com.gastronomia.costos_gastronomicos.Repository.IngredienteRepository;
 import com.gastronomia.costos_gastronomicos.Repository.PlatoRepository;
+
+import jakarta.transaction.Transactional;
 
 @Service
 public class PlatoService {
@@ -16,16 +21,41 @@ public class PlatoService {
     @Autowired
     PlatoRepository platoRepository;
 
+    @Autowired
+    IngredienteRepository ingredienteRepository;
 
-    public Plato savePlato(Plato plato){
 
+    @Transactional
+    public Plato guardarPlato(Plato plato) {
+        if (plato.getReceta() != null) {
+            for (PlatoIngrediente item : plato.getReceta()) {
+        
+                item.setPlato(plato);
+
+        
+                if (item.getIngrediente() != null && item.getIngrediente().getIngrediente_id() != null) {
+        
+                    Ingrediente ingredienteReal = ingredienteRepository.findById(item.getIngrediente().getIngrediente_id())
+                            .orElseThrow(() -> new RuntimeException("Ingrediente no encontrado: " + item.getIngrediente().getIngrediente_id()));
+                    
+        
+                    item.setIngrediente(ingredienteReal);
+                }
+            }
+        }
+
+        
+        double costoCalculado = plato.calcularCosto();
+        double margen = plato.aplicarMargen();
+        plato.setCostoTotal(costoCalculado);
+        plato.setPrecioVenta(margen);
+
+        
         return platoRepository.save(plato);
     }
-
     public List<Plato> getAllPlatos(){
 
         return platoRepository.findAll();
-                 
     }
 
     public Plato getPlatoById(Long id){
@@ -44,5 +74,5 @@ public class PlatoService {
         platoRepository.delete(plato);
     }
 
-    
+
 }

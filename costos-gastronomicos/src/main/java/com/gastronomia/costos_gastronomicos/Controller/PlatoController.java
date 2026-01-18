@@ -30,7 +30,7 @@ public class PlatoController {
     @PostMapping
     public ResponseEntity<Plato> savePlato(@RequestBody Plato plato){
 
-        Plato newPlato =  platosService.savePlato(plato);
+        Plato newPlato =  platosService.guardarPlato(plato);
 
         return new ResponseEntity<>(newPlato, HttpStatus.CREATED);
     }

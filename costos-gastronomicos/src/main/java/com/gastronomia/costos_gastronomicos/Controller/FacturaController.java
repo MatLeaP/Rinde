@@ -54,11 +54,11 @@ public class FacturaController {
 
     }
 
-    @GetMapping("/{number}/{id}")
+    @GetMapping("/{number}/{proveedor_id}/{cliente_id}")
     public ResponseEntity<Optional<Factura>> getFacturaByNumberAndProveedorId(@PathVariable String number,
-            @PathVariable Long id) {
+            @PathVariable Long proveedor_id, @PathVariable Long cliente_id) {
 
-        Optional<Factura> factura = facturaService.getFacturaByNumberAndProveedorId(number, id);
+        Optional<Factura> factura = facturaService.getFacturaByNumberAndProveedorIdAndClienteId(number, proveedor_id,cliente_id );
         return ResponseEntity.ok(factura);
     }
 

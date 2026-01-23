@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -36,21 +37,16 @@ public class PlatoController {
     }
 
 
-    @GetMapping 
-    public ResponseEntity<List<Plato>> getAllPlatos(){
+    
+    @GetMapping("/{clienteId}")
+    public ResponseEntity<List<Plato>> getAllPlatos(@PathVariable Long clienteId){
 
-        List<Plato> platos = platosService.getAllPlatos();
+        List<Plato> platos = platosService.getAllPlatosByClienteId(clienteId);
 
         return ResponseEntity.ok(platos);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Plato> plato(@PathVariable Long id){
-
-        Plato plato = platosService.getPlatoById(id);
-
-        return ResponseEntity.ok(plato);
-    }
+   
 
 
 }

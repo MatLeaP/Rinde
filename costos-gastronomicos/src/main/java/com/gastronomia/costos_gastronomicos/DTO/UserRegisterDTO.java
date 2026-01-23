@@ -13,4 +13,6 @@ public class UserRegisterDTO {
 
     private Long clienteId;
 
+    private String rol;
+
 }

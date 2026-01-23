@@ -17,10 +17,13 @@ import com.gastronomia.costos_gastronomicos.Model.Factura;
 public interface FacturaRepository extends JpaRepository<Factura, Long>  {
 
 
-    @Query("SELECT f FROM Factura f WHERE f.numeroFactura = :numero AND f.proveedor.proveedor_id = :id")
-    Optional<Factura> findByNumeroFacturaAndProveedorId(
+    @Query("SELECT f FROM Factura f WHERE f.numeroFactura = :numero AND f.proveedor.proveedor_id = :proveedor_id AND f.cliente.cliente_id = :cliente_id")
+    Optional<Factura> findByIdAndProveedorIdAndClienteId(
         @Param("numero") String numeroFactura, 
-        @Param("id") Long proveedor_id   );
+        @Param("proveedor_id") Long proveedor_id,
+        @Param("cliente_id")  Long cliente_id );
+
+    
 
     
 

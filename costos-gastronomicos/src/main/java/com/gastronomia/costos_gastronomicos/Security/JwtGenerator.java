@@ -21,19 +21,21 @@ public class JwtGenerator {
 
     public String generateToken(Authentication authentication) {
         String userName = authentication.getName();
+
+        // Extraemos el rol (authority) del objeto authentication
+        // Asumiendo que el usuario tiene un solo rol como en tu entidad Usuario
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+
         Date currentDate = new Date();
         Date expirateDate = new Date(currentDate.getTime() + jwtExpirationInMs);
 
-        // Generamos el token forzando el algoritmo HS256
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(userName)
+                .claim("rol", role) // 👈 AGREGAMOS ESTO: El frontend ahora podrá leer el rol
                 .setIssuedAt(currentDate)
                 .setExpiration(expirateDate)
-                // 🚨 CORRECCIÓN: Especificar explícitamente el algoritmo HS256
                 .signWith(Keys.hmacShaKeyFor(jwtSecret.getBytes()), SignatureAlgorithm.HS256)
                 .compact();
-
-        return token;
     }
 
     public String getUsernameFromJwt(String token) {

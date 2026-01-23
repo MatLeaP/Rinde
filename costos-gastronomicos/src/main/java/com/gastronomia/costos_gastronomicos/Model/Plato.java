@@ -3,7 +3,7 @@ package com.gastronomia.costos_gastronomicos.Model;
 
 import java.util.List;
 
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -42,6 +42,7 @@ public class Plato {
     private Cliente cliente;
 
     @OneToMany(mappedBy = "plato", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<PlatoIngrediente> receta;
 
 

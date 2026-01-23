@@ -7,6 +7,7 @@ public interface FacturaDto {
     Long getFactura_id();
     String getNumeroFactura();
     LocalDate getFecha();
+    double getTotal();
 
     ProveedorResumen getProveedor();
 

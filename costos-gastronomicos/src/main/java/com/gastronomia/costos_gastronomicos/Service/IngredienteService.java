@@ -36,6 +36,13 @@ public class IngredienteService {
         return ingrediente;
     }
 
+    public List<Ingrediente> getAllIngredientesByClienteId(Long cliente_id){
+
+        return  ingredienteRepository.findByClienteIdEspecial(cliente_id);
+
+        
+    }
+
     public void eliminarIngrediente(Long id){
 
         Ingrediente ingrediente = ingredienteRepository.findById(id)

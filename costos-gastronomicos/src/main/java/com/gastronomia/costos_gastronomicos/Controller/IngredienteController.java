@@ -13,6 +13,7 @@ import com.gastronomia.costos_gastronomicos.Model.Ingrediente;
 import com.gastronomia.costos_gastronomicos.Service.IngredienteService;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 
@@ -33,9 +34,10 @@ public class IngredienteController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Ingrediente>> getAllIngredientes(){
+    @RequestMapping("{cliente_id}")
+    public ResponseEntity<List<Ingrediente>> getAllIngredientesByClienteId(@PathVariable Long cliente_id){
 
-        List<Ingrediente> ingredientes = ingredienteService.getAllIngredientes();
+        List<Ingrediente> ingredientes = ingredienteService.getAllIngredientesByClienteId(cliente_id);
 
         return ResponseEntity.ok(ingredientes);
     }

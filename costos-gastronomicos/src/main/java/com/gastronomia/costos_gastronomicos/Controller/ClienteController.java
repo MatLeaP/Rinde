@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gastronomia.costos_gastronomicos.DTO.RegistroClienteDTO;
 import com.gastronomia.costos_gastronomicos.Model.Cliente;
 import com.gastronomia.costos_gastronomicos.Service.ClienteService;
 
@@ -22,16 +23,24 @@ public class ClienteController {
     private ClienteService clienteService;
 
     @PostMapping
-    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente){
+    public ResponseEntity<Cliente> crearCliente(@RequestBody Cliente cliente) {
 
         Cliente nuevoCliente = clienteService.saveCliente(cliente);
 
         return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
     }
 
+    @PostMapping("/registro-completo")
+    public ResponseEntity<Cliente> crearClienteCompleto(@RequestBody RegistroClienteDTO dto) {
+        // Llamamos al nuevo método del service
+        Cliente nuevoCliente = clienteService.registrarClienteCompleto(dto);
+
+        // Retornamos la empresa creada
+        return new ResponseEntity<>(nuevoCliente, HttpStatus.CREATED);
+    }
 
     @GetMapping
-    public ResponseEntity<List<Cliente>> traerClientes(){
+    public ResponseEntity<List<Cliente>> traerClientes() {
 
         List<Cliente> clientes = clienteService.getAllClientes();
 
@@ -39,7 +48,7 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> traerCliente(@PathVariable Long id){
+    public ResponseEntity<Cliente> traerCliente(@PathVariable Long id) {
 
         Cliente cliente = clienteService.getClienteById(id);
 

@@ -30,7 +30,7 @@ public class FacturaService {
             double totalFactura = 0;
 
             for (DetalleFactura detalle : detalles) {
-               
+
                 totalFactura += detalle.getPrecioUnitarioCompra() * detalle.getCantidadComprada();
 
                 Ingrediente ingredienteEnviado = detalle.getIngrediente();
@@ -38,34 +38,30 @@ public class FacturaService {
                 if (ingredienteEnviado != null && ingredienteEnviado.getNombre() != null
                         && !ingredienteEnviado.getNombre().isEmpty()) {
 
-                    
                     Ingrediente ingredienteBD = ingredienteService
                             .getIngredienteByName(ingredienteEnviado.getNombre())
                             .orElse(null);
 
                     if (ingredienteBD != null) {
-                    
+
                         double stockActualizado = ingredienteBD.getStock() + detalle.getCantidadComprada();
                         double nuevoPrecio = detalle.getPrecioUnitarioCompra();
 
                         ingredienteBD.setPrecioUnitario(nuevoPrecio);
                         ingredienteBD.setStock(stockActualizado);
 
-                        
                         ingredienteBD.setPrecioUnitario(detalle.getPrecioUnitarioCompra());
 
                         ingredienteService.saveIngrediente(ingredienteBD);
                         detalle.setIngrediente(ingredienteBD);
                     } else {
-                       
+
                         ingredienteEnviado.setStock(detalle.getCantidadComprada());
                         ingredienteEnviado.setPrecioUnitario(detalle.getPrecioUnitarioCompra());
 
-                        
                         ingredienteEnviado.setCliente(factura.getCliente());
                         ingredienteEnviado.setProveedor(factura.getProveedor());
 
-                      
                         if (ingredienteEnviado.getUnidadDeMedida() == null) {
                             ingredienteEnviado.setUnidadDeMedida("Unidad");
                         }
@@ -78,7 +74,6 @@ public class FacturaService {
                             "Error: El detalle de la factura debe incluir un objeto 'ingrediente' con un 'nombre' válido.");
                 }
 
-                
                 detalle.setFactura(factura);
             }
             factura.setTotal(totalFactura);
@@ -97,15 +92,16 @@ public class FacturaService {
 
     }
 
-    public Optional<Factura> getFacturaByNumber(String number){
+    public Optional<Factura> getFacturaByNumber(String number) {
 
         return facturaRepository.findByNumeroFactura(number);
 
     }
 
-    public Optional<Factura> getFacturaByNumberAndProveedorId(String number, Long id) {
-    return facturaRepository.findByNumeroFacturaAndProveedorId(number, id);
-}
+    public Optional<Factura> getFacturaByNumberAndProveedorIdAndClienteId(String number, Long proveedor_id, Long cliente_id) {
+        return facturaRepository.findByIdAndProveedorIdAndClienteId(number, proveedor_id, cliente_id);
+    }
+
     public List<Factura> getAllFacturas() {
 
         return facturaRepository.findAll();

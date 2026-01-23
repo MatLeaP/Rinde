@@ -29,6 +29,10 @@ public class Cliente {
     
     private String direccion;
 
+    private String email;
+
+    private String telefono;
+
     @OneToMany(mappedBy = "cliente")
     @JsonIgnore
     private List<Usuario> usuarios;

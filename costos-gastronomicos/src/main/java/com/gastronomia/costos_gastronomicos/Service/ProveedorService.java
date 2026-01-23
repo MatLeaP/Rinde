@@ -20,9 +20,9 @@ public class ProveedorService {
         return proveedorRepository.save(proveedor);
     }
 
-    public List<Proveedor> getAllProveedores(){
+    public List<Proveedor> getAllProveedoresByClienteId(Long clienteId){
 
-        return proveedorRepository.findAll();
+        return proveedorRepository.findByClienteId(clienteId);
     }
 
     public Proveedor getProveedorById(Long id){

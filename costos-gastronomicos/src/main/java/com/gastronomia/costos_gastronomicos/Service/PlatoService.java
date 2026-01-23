@@ -53,9 +53,9 @@ public class PlatoService {
         
         return platoRepository.save(plato);
     }
-    public List<Plato> getAllPlatos(){
+    public List<Plato> getAllPlatosByClienteId(Long clienteId){
 
-        return platoRepository.findAll();
+        return platoRepository.findByClienteId(clienteId);
     }
 
     public Plato getPlatoById(Long id){

@@ -33,23 +33,22 @@ public class AuthService {
 
     private final AuthenticationManager authenticationManager;
 
-    public AuthService(PasswordEncoder passwordEncoder,AuthenticationManager authenticationManager, JwtGenerator jwtGenerator){
+    public AuthService(PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
+            JwtGenerator jwtGenerator) {
         this.passwordEncoder = passwordEncoder;
         this.jwtGenerator = jwtGenerator;
         this.authenticationManager = authenticationManager;
     }
 
-    public TokenDTO login(LoginDTO loginDTO){
-        
+    public TokenDTO login(LoginDTO loginDTO) {
+
         try {
             // 🚨 CORRECCIÓN CLAVE: Pasar el username y password como strings
             Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                    loginDTO.getUserName(), 
-                    loginDTO.getPassword()
-                )
-            );
-            
+                    new UsernamePasswordAuthenticationToken(
+                            loginDTO.getUserName(),
+                            loginDTO.getPassword()));
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
 
             String token = jwtGenerator.generateToken(authentication);
@@ -60,25 +59,37 @@ public class AuthService {
             // Captura las excepciones de autenticación (BadCredentials, Disabled, etc.)
             // Puedes loguear el error o relanzar una excepción personalizada:
             System.err.println("Fallo de autenticación: " + e.getMessage());
-            
+
             // Relanzar la excepción. El @ControllerAdvice la puede capturar y devolver 401.
             // Si la relanzas, aparecerá el error específico en la consola.
-            throw e; 
+            throw e;
         }
     }
 
-    public Usuario registrarUsuario(UserRegisterDTO userRegisterDTO){
+    public Usuario registrarUsuario(UserRegisterDTO userRegisterDTO) {
+        // 1. PRIMERO validamos que el nombre no exista para evitar duplicados
+        if (usuarioRepository.findByUserName(userRegisterDTO.getUserName()).isPresent()) {
+            throw new RuntimeException("El nombre de usuario '" + userRegisterDTO.getUserName() + "' ya está en uso.");
+        }
 
         Cliente cliente = clienteRepository.findById(userRegisterDTO.getClienteId())
-                    .orElseThrow(() -> new NoSuchElementException("El cliente no existe"));
+                .orElseThrow(() -> new NoSuchElementException("El cliente no existe"));
 
         Usuario usuario = new Usuario();
-
         usuario.setCliente(cliente);
-        usuario.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
         usuario.setUserName(userRegisterDTO.getUserName());
+        usuario.setPassword(passwordEncoder.encode(userRegisterDTO.getPassword()));
+        usuario.setRol(userRegisterDTO.getRol());
 
         return usuarioRepository.save(usuario);
+    }
 
+    public void registrarUsuarioDesdeAdmin(Usuario usuario) {
+        // Encriptamos la clave antes de guardar
+        usuario.setPassword(passwordEncoder.encode(usuario.getPassword()));
+
+        // Guardamos el usuario (que ya trae el cliente_id asignado desde el service de
+        // Cliente)
+        usuarioRepository.save(usuario);
     }
 }
